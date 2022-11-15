@@ -9,18 +9,49 @@ export default function App() {
   const [result, setResult] = useState(false);
   const [score, setScore] = useState(0);
   const [data, setData] = useState([]);
-  const handleSubmit = () => {
+  const [answeredQue, setAnsweredQue] = useState([]);
+  const handlePrevious = () => {
+    setQNo(qNo - 1);
+    setAns("");
+  };
+  const handleNext = () => {
+    let arr = answeredQue
     let correctAns = questions.find((i) => i.rigthAns === ans);
     if (qNo + 1 === questions.length) {
       setResult(true);
     }
-    if (correctAns) {
-      setScore(score + 1);
-    }
     setQNo(qNo + 1);
     setAns("");
+    let alreadyExist = answeredQue.find((i) => i.qNo === qNo);
+    if (alreadyExist) {
+      answeredQue.pop();
+      let obj1 = {
+        qNo: questions[qNo].id,
+        ans: correctAns ? true : false,
+      };
+      arr.push(obj1)
+      setAnsweredQue(arr);
+    } else {
+      let obj2 = {
+        qNo: questions[qNo].id,
+        ans: correctAns ? true : false,
+      };
+      arr.push(obj2)
+      setAnsweredQue(arr);
+    }
   };
   useEffect(() => {
+    let score = 0;
+    if (result) {
+      answeredQue.forEach((i) => {
+        let { ans } = i;
+        if (ans) {
+          score = score + 1;
+        }
+        // return i;
+      });
+      setScore(score);
+    }
     setData([
       {
         title: "Correct Answer",
@@ -57,7 +88,7 @@ export default function App() {
                       id="ans1"
                       class="answer"
                       isChecked={ans === questions[qNo].a}
-                      value={questions[qNo].a}
+                      value='a'
                       onChange={(e) => setAns(e.target.value)}
                     />
                     <label for="ans1" id="option1">
@@ -71,7 +102,7 @@ export default function App() {
                       id="ans2"
                       class="answer"
                       isChecked={ans === questions[qNo].b}
-                      value={questions[qNo].b}
+                      value='b'
                       onChange={(e) => setAns(e.target.value)}
                     />
                     <label for="ans2" id="option2">
@@ -85,7 +116,7 @@ export default function App() {
                       id="ans3"
                       class="answer"
                       isChecked={ans === questions[qNo].c}
-                      value={questions[qNo].c}
+                      value='c'
                       onChange={(e) => setAns(e.target.value)}
                     />
                     <label for="ans3" id="option3">
@@ -99,7 +130,7 @@ export default function App() {
                       id="ans4"
                       class="answer"
                       isChecked={ans === questions[qNo].d}
-                      value={questions[qNo].d}
+                      value='d'
                       onChange={(e) => setAns(e.target.value)}
                     />
                     <label for="ans4" id="option4">
@@ -107,9 +138,21 @@ export default function App() {
                     </label>
                   </li>
                 </ul>
-                <button id="submit" onClick={() => handleSubmit()}>
-                  Submit
-                </button>
+                {questions[qNo].id !== 0 && (
+                  <button id="submit" onClick={() => handlePrevious()}>
+                    Previous
+                  </button>
+                )}
+                {questions[qNo].id !== 4 && (
+                  <button id="submit" onClick={() => handleNext()}>
+                    Next
+                  </button>
+                )}
+                {questions[qNo].id === 4 && (
+                  <button id="submit" onClick={() => handleNext()}>
+                    Submit
+                  </button>
+                )}
               </>
             )}
           </>
